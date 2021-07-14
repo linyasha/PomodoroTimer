@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@color/gray_main">
+
+    <View
+        android:id="@+id/pointView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/tringle"
+        android:rotation="180"
+        app:layout_constraintDimensionRatio="H,1:1.2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        tools:listitem="@layout/view_holder_recycle"
+        tools:itemCount="2"/>
+
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:backgroundTint="@color/red_main"
+        app:layout_constraintBottom_toTopOf="@id/set_timer"
+        android:layout_margin="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_add_24"
+        app:tint="@color/white"/>
+
+    <RelativeLayout
+        android:id="@+id/set_timer"
+        android:transitionName="set_timer"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_height="50dp"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        android:background="@drawable/custom_shape">
+
+       <EditText
+           android:id="@+id/edit_minutes"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginStart="16dp"
+           android:layout_alignParentStart="true"
+           android:layout_centerVertical="true"
+           android:hint="@string/minutes"
+           android:inputType="number"
+           android:maxLines="1"
+           android:maxLength="4"/>
+
+        <EditText
+            android:id="@+id/edit_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/edit_minutes"
+            android:hint="@string/seconds"
+            android:inputType="number"
+            android:maxLines="1"
+            android:maxLength="2"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_timer_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            app:cornerRadius="10dp"
+            android:enabled="false"
+            android:text="@string/add_timer"
+            android:backgroundTint="@color/gray_main"/>
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

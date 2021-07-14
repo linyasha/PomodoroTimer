@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Pomodoro</string>
+    <string name="timer_string">00:00:00</string>
+    <string name="start">START</string>
+    <string name="add_timer">Add timer</string>
+    <string name="minutes">Minutes</string>
+    <string name="seconds">Seconds</string>
+
+
+</resources>
