@@ -10,4 +10,6 @@
     <color name="gray_main">#383535</color>
     <color name="red_main">#ab0c0c</color>
     <color name="transparent">#00000000</color>
+    <color name="end_timer">#272629</color>
+
 </resources>

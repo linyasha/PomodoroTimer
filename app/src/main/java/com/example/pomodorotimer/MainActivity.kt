@@ -141,9 +141,8 @@ class MainActivity : AppCompatActivity(), StopWatcherListener {
             val oldTimer = stopwatches.find { it.id == idTimerStart }
             changeStopwatch(idTimerStart, oldTimer?.currentMs ?: 0, false)
         }
-        val currentTimer = stopwatches.find { it.id == id }
-        if(currentTimer?.isStarted == true) currentTimer.currentMs = System.currentTimeMillis() - currentTimer.forDifference
         changeStopwatch(id, null, true)
+
         idTimerStart = id
 
 //        var currentTimer = stopwatches.find { it.id == id }
@@ -164,6 +163,7 @@ class MainActivity : AppCompatActivity(), StopWatcherListener {
 
     override fun reset(id: Int) {
         val currentTimer = stopwatches.find { it.id == id }
+        currentTimer?.forDifference = 0L
         changeStopwatch(id, currentTimer?.startMs ?: 0, false)
 
     }
@@ -171,6 +171,10 @@ class MainActivity : AppCompatActivity(), StopWatcherListener {
     override fun delete(id: Int) {
         stopwatches.remove(stopwatches.find { it.id == id })
         stopwatchAdapter.submitList(stopwatches.toList())
+    }
+
+    override fun timerEnd(id: Int) {
+        idTimerStart = -1
     }
 
     private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {

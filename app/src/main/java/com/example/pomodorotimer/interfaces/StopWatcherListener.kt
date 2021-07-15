@@ -11,4 +11,6 @@ interface StopWatcherListener {
 
     fun delete(id: Int)
 
+    fun timerEnd(id: Int)
+
 }
