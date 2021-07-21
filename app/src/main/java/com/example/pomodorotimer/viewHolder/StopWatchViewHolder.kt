@@ -3,6 +3,7 @@ package com.example.pomodorotimer.viewHolder
 import android.annotation.SuppressLint
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
@@ -22,12 +23,17 @@ class StopWatchViewHolder(
     private var timer: CountDownTimer? = null
 
     fun bind(stopwatch: StopWatchModel) {
-        if(stopwatch.forDifference != 0L && stopwatch.isStarted) {
+        if(stopwatch.currentMs == -1L)  binding.container.setBackgroundColor(ContextCompat.getColor(binding.container.context, R.color.end_timer))
+        else {
+            if(stopwatch.forDifference != 0L && stopwatch.isStarted) {
                 stopwatch.currentMs -= System.currentTimeMillis() - stopwatch.forDifference
 
+            }
+            binding.container.setBackgroundColor(ContextCompat.getColor(binding.container.context, R.color.white))
+            binding.customProgress.setPeriod(stopwatch.startMs)
+            binding.customProgress.setCurrent(stopwatch.startMs - stopwatch.currentMs)
+            binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
         }
-        binding.customProgress.setPeriod(stopwatch.startMs)
-        binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
         if (stopwatch.isStarted) {
             startTimer(stopwatch)
         }
@@ -48,6 +54,7 @@ class StopWatchViewHolder(
 
     private fun stopTimer(stopwatch: StopWatchModel) {
         binding.startPauseButton.text = START
+        stopwatch.isStarted = false
         timer?.cancel()
         stopwatch.forDifference = 0L
         binding.blinkingIndicator.isInvisible = true
@@ -66,11 +73,11 @@ class StopWatchViewHolder(
         }
 
         binding.restartButton.setOnClickListener {
-            if(stopwatch.currentMs <= 0) {
-                binding.startPauseButton.isEnabled = true
-                //binding.container.setBackgroundColor(getColor(binding.container.context, R.color.white))
-            }
-
+//            if(stopwatch.currentMs <= 0) {
+//                binding.startPauseButton.isEnabled = true
+//                //binding.container.setBackgroundColor(getColor(binding.container.context, R.color.white))
+//            }
+            binding.container.setBackgroundColor(ContextCompat.getColor(binding.container.context, R.color.white))
             listener.reset(stopwatch.id)
         }
 
@@ -84,16 +91,19 @@ class StopWatchViewHolder(
             val interval = UNIT_TEN_MS
             @SuppressLint("ResourceAsColor")
             override fun onTick(millisUntilFinished: Long) {
+                stopwatch.forDifference = System.currentTimeMillis()
                 stopwatch.currentMs -= interval
                 binding.customProgress.setCurrent(stopwatch.startMs - stopwatch.currentMs)
                 binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
-                stopwatch.forDifference = System.currentTimeMillis()
 
                 if(stopwatch.currentMs <= 0L) {
                     stopTimer(stopwatch)
                     binding.customProgress.setCurrent(0L)
-//                    binding.container.setBackgroundColor(getColor(binding.container.context, R.color.end_timer))
-                    binding.startPauseButton.isEnabled = false
+                    stopwatch.currentMs = stopwatch.startMs
+                    binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
+                    stopwatch.forDifference = 0L
+                    stopwatch.currentMs = -1L
+                    binding.container.setBackgroundColor(ContextCompat.getColor(binding.container.context, R.color.end_timer))
                     listener.timerEnd(stopwatch.id)
                 }
             }

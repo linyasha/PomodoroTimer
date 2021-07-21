@@ -144,16 +144,6 @@ class MainActivity : AppCompatActivity(), StopWatcherListener {
         changeStopwatch(id, null, true)
 
         idTimerStart = id
-
-//        var currentTimer = stopwatches.find { it.id == id }
-//        currentTimer?.startTime = System.currentTimeMillis()
-//        lifecycleScope.launch(Dispatchers.Main) {
-//            while (true) {
-//
-//                bindingViewModel.stopwatchTimer.text = (currentTimer!!.currentMs - (System.currentTimeMillis() - currentTimer.startTime)).displayTime()
-//                delay(INTERVAL)
-//            }
-//        }
     }
 
     override fun stop(id: Int, currentMs: Long) {
@@ -162,6 +152,7 @@ class MainActivity : AppCompatActivity(), StopWatcherListener {
     }
 
     override fun reset(id: Int) {
+        if(idTimerStart == id) idTimerStart = -1
         val currentTimer = stopwatches.find { it.id == id }
         currentTimer?.forDifference = 0L
         changeStopwatch(id, currentTimer?.startMs ?: 0, false)
