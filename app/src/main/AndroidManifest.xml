@@ -19,11 +19,16 @@
 
         </activity>
         <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"/>
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <service
+            android:enabled="true" android:name=".ForegroundService"
+            android:permission="android.permission.FOREGROUND_SERVICE"/>
 
     </application>
 

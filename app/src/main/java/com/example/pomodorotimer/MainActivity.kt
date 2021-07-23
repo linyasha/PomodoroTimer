@@ -2,6 +2,7 @@ package com.example.pomodorotimer
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -10,7 +11,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pomodorotimer.adapters.StopWatchAdapter
 import com.example.pomodorotimer.model.StopWatchModel
@@ -22,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(), StopWatcherListener {
+class MainActivity : AppCompatActivity(), StopWatcherListener, LifecycleObserver {
 
     //Variables
     private lateinit var binding: ActivityMainBinding
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity(), StopWatcherListener {
         bindingViewModel = ViewHolderRecycleBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.statusBarColor = getColor(R.color.red_main)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
         binding.apply {
             recycler.layoutManager = LinearLayoutManager(recycler.context)
@@ -61,6 +63,27 @@ class MainActivity : AppCompatActivity(), StopWatcherListener {
             floatingActionButton.setOnClickListener {
                 onAddButtonClicked()
             }
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onAppBackgrounded() {
+        if(idTimerStart != -1) {
+            val startIntent = Intent(this, ForegroundService::class.java)
+            startIntent.putExtra(COMMAND_ID, COMMAND_START)
+            val currentTimer = stopwatches.find { it.id == idTimerStart }
+            startIntent.putExtra(STARTED_TIMER_TIME_MS, currentTimer?.currentMs ?: 9999999)
+            startService(startIntent)
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppForegrounded() {
+        if(idTimerStart != -1) {
+            val stopIntent = Intent(this, ForegroundService::class.java)
+            stopIntent.putExtra(COMMAND_ID, COMMAND_STOP)
+            startService(stopIntent)
+
         }
     }
 
@@ -191,5 +214,10 @@ class MainActivity : AppCompatActivity(), StopWatcherListener {
         private const val MAX_TIME_MINUTES = 5999
         private const val MAX_TIME_SECONDS = 59
         private const val NUMBER_EXCEEDS_RANGE = "Number is too large"
+        private const val COMMAND_START = "COMMAND_START"
+        private const val COMMAND_STOP = "COMMAND_STOP"
+        private const val INVALID = "INVALID"
+        private const val STARTED_TIMER_TIME_MS = "STARTED_TIMER_TIME_MS"
+        private const val COMMAND_ID = "COMMAND_ID"
     }
 }
