@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.pomodorotimer.utills.Utills.displayTime
 import com.example.pomodorotimer.viewHolder.StopWatchViewHolder
 import kotlinx.coroutines.*
 
@@ -108,25 +109,6 @@ class ForegroundService : Service() {
         } else {
             Log.d("TAG", "moveToStartedState(): Running on Android N or lower")
             startService(Intent(this, ForegroundService::class.java))
-        }
-    }
-
-    private fun Long.displayTime(): String {
-        if (this <= 0L) {
-            return START_TIME
-        }
-        val h = this / 1000 / 3600
-        val m = this / 1000 % 3600 / 60
-        val s = this / 1000 % 60
-
-        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
-    }
-
-    private fun displaySlot(count: Long): String {
-        return if (count / 10L > 0) {
-            "$count"
-        } else {
-            "0$count"
         }
     }
 

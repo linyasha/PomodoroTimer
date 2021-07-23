@@ -12,6 +12,8 @@ import com.example.pomodorotimer.R
 import com.example.pomodorotimer.model.StopWatchModel
 import com.example.pomodorotimer.interfaces.StopWatcherListener
 import com.example.pomodorotimer.databinding.ViewHolderRecycleBinding
+import com.example.pomodorotimer.utills.Utills
+import com.example.pomodorotimer.utills.Utills.displayTime
 
 class StopWatchViewHolder(
 
@@ -44,7 +46,7 @@ class StopWatchViewHolder(
     }
 
     private fun startTimer(stopwatch: StopWatchModel) {
-        binding.startPauseButton.text = STOP
+        binding.startPauseButton.text = Utills.STOP
         timer?.cancel()
         timer = getCountDownTimer(stopwatch)
         timer?.start()
@@ -53,7 +55,7 @@ class StopWatchViewHolder(
     }
 
     private fun stopTimer(stopwatch: StopWatchModel) {
-        binding.startPauseButton.text = START
+        binding.startPauseButton.text = Utills.START
         stopwatch.isStarted = false
         timer?.cancel()
         stopwatch.forDifference = 0L
@@ -73,10 +75,6 @@ class StopWatchViewHolder(
         }
 
         binding.restartButton.setOnClickListener {
-//            if(stopwatch.currentMs <= 0) {
-//                binding.startPauseButton.isEnabled = true
-//                //binding.container.setBackgroundColor(getColor(binding.container.context, R.color.white))
-//            }
             binding.container.setBackgroundColor(ContextCompat.getColor(binding.container.context, R.color.white))
             listener.reset(stopwatch.id)
         }
@@ -87,15 +85,14 @@ class StopWatchViewHolder(
 
     private fun getCountDownTimer(stopwatch: StopWatchModel): CountDownTimer {
 
-        return object : CountDownTimer(PERIOD, UNIT_TEN_MS) {
-            val interval = UNIT_TEN_MS
-            @SuppressLint("ResourceAsColor")
+        return object : CountDownTimer(Utills.PERIOD, Utills.UNIT_MS) {
+            val interval = Utills.UNIT_MS
             override fun onTick(millisUntilFinished: Long) {
                 stopwatch.forDifference = System.currentTimeMillis()
                 stopwatch.currentMs -= interval
                 binding.customProgress.setCurrent(stopwatch.startMs - stopwatch.currentMs)
                 binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
-
+                //TODO("Костыль, поправлю")
                 if(stopwatch.currentMs <= 0L) {
                     stopTimer(stopwatch)
                     binding.customProgress.setCurrent(0L)
@@ -110,37 +107,8 @@ class StopWatchViewHolder(
 
             override fun onFinish() {
                 binding.stopwatchTimer.text = stopwatch.currentMs.displayTime()
-
             }
         }
     }
 
-
-    private fun Long.displayTime(): String {
-        if (this <= 0L) {
-            return START_TIME
-        }
-        val h = this / 1000 / 3600
-        val m = this / 1000 % 3600 / 60
-        val s = this / 1000 % 60
-
-        return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
-    }
-
-    private fun displaySlot(count: Long): String {
-        return if (count / 10L > 0) {
-            "$count"
-        } else {
-            "0$count"
-        }
-    }
-
-
-    private companion object {
-        private const val START_TIME = "00:00:00"
-        private const val STOP = "STOP"
-        private const val START = "START"
-        private const val UNIT_TEN_MS = 1000L
-        private const val PERIOD  = 1000L * 60L * 60L * 24L // Day
-    }
 }
